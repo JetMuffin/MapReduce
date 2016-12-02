@@ -1,4 +1,4 @@
-package edu.nju.jetmuffin;
+package edu.nju.jetmuffin.NodeIteration;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;

@@ -1,16 +1,10 @@
-package edu.nju.jetmuffin;
+package edu.nju.jetmuffin.NodeIteration;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner;
-import org.apache.hadoop.util.GenericOptionsParser;
 
 import java.io.IOException;
 
@@ -41,7 +35,7 @@ public class GraphBuilder {
     }
 
     public static class GraphPartitioner extends HashPartitioner<Text, NullWritable> {
-        public int getPartitioner(Text key, NullWritable value, int i) {
+        public int getPartition(Text key, NullWritable value, int i) {
             // Enforce same keys that has same from node to emit to one machine
             String from = key.toString().split(" ")[0];
             return super.getPartition(new Text(from), value, i);
@@ -52,13 +46,17 @@ public class GraphBuilder {
         private StringBuffer edges = new StringBuffer();
         private String lastFromNode = null;
         private String lastToNode = null;
+        private Text outputKey = new Text();
+        private Text outputValue = new Text();
         public void reduce(Text key, Iterable<NullWritable> values, Context context) throws IOException, InterruptedException {
             String[] splits = key.toString().split(" ");
             String fromNode = splits[0];
             String toNode = splits[1];
 
             if(lastFromNode != null && !fromNode.equals(lastFromNode)) {
-                context.write(new Text(lastFromNode), new Text(edges.toString()));
+                outputKey.set(lastFromNode);
+                outputValue.set(edges.toString());
+                context.write(outputKey, outputValue);
                 edges = new StringBuffer();
             }
 
@@ -73,7 +71,11 @@ public class GraphBuilder {
         }
 
         protected void cleanup(Context context) throws IOException, InterruptedException {
-            context.write(new Text(lastFromNode), new Text(edges.toString()));
+            if(lastToNode != null) {
+                outputKey.set(lastFromNode);
+                outputValue.set(edges.toString());
+                context.write(outputKey, outputValue);
+            }
         }
     }
 }
