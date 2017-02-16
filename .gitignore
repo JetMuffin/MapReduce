@@ -18,6 +18,8 @@ hs_err_pid*
 # Input or output files
 input
 output
+out
 data
 
 target
+.DS_STORE
