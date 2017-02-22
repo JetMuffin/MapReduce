@@ -10,12 +10,15 @@ import java.util.Properties
 /**
   * Load properties file that can be later accessed as values of Conf instance
   */
-class Conf() {
+class Conf(path: Option[String]) {
 
   // Load properties
   val properties = new Properties()
-  val path = Thread.currentThread().getContextClassLoader.getResource("config.properties").getPath
-  properties.load(new FileInputStream(path))
+  path match {
+    case Some(str) => str
+    case None => Thread.currentThread().getContextClassLoader.getResource("config.properties").getPath
+  }
+  properties.load(new FileInputStream(path.get))
 
   def get(key: String, defaultValue: String): String = {
     return properties.getProperty(key, defaultValue)

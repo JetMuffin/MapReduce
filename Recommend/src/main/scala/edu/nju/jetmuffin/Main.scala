@@ -8,7 +8,7 @@ import edu.nju.jetmuffin.recommender.RecommenderFactory
   * Created by cj on 2017/2/15.
   */
 object Main extends App {
-  val conf = new Conf()
+  val conf = new Conf(Some("/Users/cj/workspace/java/MapReduce/Recommend/src/main/resources/config.properties"))
 
   val recommender = RecommenderFactory.getRecommenderInstance(conf)
   val ratings = Dataset.getRatings(conf)
@@ -44,5 +44,5 @@ object Main extends App {
     }
   }
 
-  result.coalesce(1).sortByKey().saveAsTextFile(conf.get("data_dir", "data") + conf.get("output", "result"))
+  result.coalesce(1).sortByKey().saveAsTextFile(conf.get("data_dir", "data") + "/" + conf.get("output", "result"))
 }

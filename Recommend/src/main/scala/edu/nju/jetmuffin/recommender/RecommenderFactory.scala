@@ -39,11 +39,8 @@ object RecommenderFactory {
     override def getName = "als"
 
     override def getRecommender(conf: Conf): Recommender = {
-      val rank = conf.getInt("als_rank", 50)
-      val lambda = conf.getDouble("als_lambda", 0.01)
-      val numIters = conf.getInt("als_iteration", 10)
 
-      new ALSRecommender(rank, lambda, numIters)
+      new ALSRecommender()
     }
   }
 

@@ -13,7 +13,7 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 object SparkEnv {
 
-  Logger.getLogger("org.apache.spark").setLevel(Level.INFO)
+  Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
 
   val conf = new SparkConf().setMaster("local").setAppName("RecommendSystem")
   val sc = new SparkContext(conf)
